@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}NIKSS Coding Hub | Learn. Build. Launch.{% endblock %}
+{% block content %}
+<section class="hero">
+ <div class="hero-copy">
+  <div class="eyebrow"><span class="live"></span> NEXT-GEN LEARNING PLATFORM</div>
+  <h1>Turn <em>code</em> into<br>real-world skills.</h1>
+  <p>Master programming, web development, cybersecurity and data skills through structured courses, practical projects and your NIKSS AI Tutor.</p>
+  <div class="actions">
+   <a class="btn primary" href="{{ url_for('courses') }}">Explore Courses <b>→</b></a>
+   {% if session.get('user_id') %}<a class="btn secondary" href="{{ url_for('chatbot') }}">Open AI Tutor ✦</a>
+   {% else %}<a class="btn secondary" href="{{ url_for('register') }}">Start Learning</a>{% endif %}
+  </div>
+  <div class="hero-metrics"><div><b>01</b><span>Learn</span></div><div><b>02</b><span>Build</span></div><div><b>03</b><span>Launch</span></div></div>
+ </div>
+ <div class="hero-code">
+  <div class="code-card">
+   <div class="code-top"><span>● ● ●</span><small>nikss_developer.py</small><b>LIVE</b></div>
+   <pre><code><i>class</i> <u>Developer</u>:
+    <i>def</i> <mark>build</mark>(self):
+        skills = [
+            <strong>"Python"</strong>,
+            <strong>"Web Development"</strong>,
+            <strong>"SQL"</strong>,
+            <strong>"AI"</strong>
+        ]
+        <i>return</i> <strong>"Ship something real."</strong></code></pre>
+   <div class="code-status">● NIKSS AI Tutor ready <span>Python · UTF-8</span></div>
+  </div>
+  <div class="float-card fc1">✦ <span><b>AI Coding Tutor</b><small>Ask · Learn · Debug</small></span></div>
+  <div class="float-card fc2">⚡ <span><b>Project Based</b><small>Build your portfolio</small></span></div>
+ </div>
+</section>
+
+<section class="section">
+ <div class="section-head"><div><div class="eyebrow">CURATED LEARNING</div><h2>Featured <em>courses</em></h2></div><a href="{{ url_for('courses') }}">View all →</a></div>
+ <div class="grid-3">
+ {% for course in courses %}
+  <article class="course-card">
+   <div class="course-cover">
+    {% if course.image %}<img src="{{ url_for('static', filename='uploads/' ~ course.image) }}" alt="{{ course.title }}" onerror="this.style.display='none'">{% endif %}
+    <span>{{ course.level }}</span><b>{{ course.title[:1] }}</b>
+   </div>
+   <div class="course-body"><small>{{ course.duration }} · PROJECT BASED</small><h3>{{ course.title }}</h3><p>{{ course.description }}</p>
+    <div class="course-foot"><strong>₹{{ "%.0f"|format(course.price or 0) }}</strong><a href="{{ url_for('course_details', course_id=course.id) }}">Explore →</a></div>
+   </div>
+  </article>
+ {% else %}<div class="empty full">New courses are coming soon.</div>{% endfor %}
+ </div>
+</section>
+
+<section class="feature-panel">
+ <div><div class="eyebrow">WHY NIKSS</div><h2>From beginner<br>to <em>builder.</em></h2><p>A focused platform for learning concepts, building projects and developing the confidence to explain your code.</p></div>
+ <div class="feature-list">
+  <div><b>01</b><span><strong>Structured Paths</strong><small>Clear progression without tutorial overload.</small></span></div>
+  <div><b>02</b><span><strong>Real Projects</strong><small>Practice with portfolio-ready development.</small></span></div>
+  <div><b>03</b><span><strong>AI Learning Support</strong><small>Get fast help when code gets confusing.</small></span></div>
+ </div>
+</section>
+{% endblock %}

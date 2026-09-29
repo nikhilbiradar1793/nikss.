@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}Chat History | NIKSS Admin{% endblock %}
+{% block content %}
+<section class="admin-form-head"><a class="back" href="{{ url_for('admin_dashboard') }}">← Admin Dashboard</a><div class="eyebrow">AI ACTIVITY</div><h1>Chat <em>history.</em></h1></section>
+<section class="admin-panel"><div class="chat-history">{% for c in chats %}<div class="history-row"><div class="history-q"><b>Q</b><span>{{ c.question }}</span></div><div class="history-a"><b>A</b><span>{{ c.answer|safe }}</span></div><small>{{ c.created_at }}</small></div>{% else %}<div class="empty">No chat history.</div>{% endfor %}</div></section>
+{% endblock %}

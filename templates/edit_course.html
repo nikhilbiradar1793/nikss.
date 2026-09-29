@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}Edit Course | NIKSS Admin{% endblock %}
+{% block content %}
+<section class="admin-form-head"><a class="back" href="{{ url_for('admin_dashboard') }}">← Admin Dashboard</a><div class="eyebrow">COURSE STUDIO</div><h1>Edit <em>{{ course.title }}</em></h1></section>
+<section class="form-card wide"><form method="POST" action="{{ url_for('admin_edit_course', course_id=course.id) }}" class="form grid-form"><label>Course title<input name="title" value="{{ course.title }}" required></label><label>Price<input name="price" type="number" min="0" step="1" value="{{ course.price or 0 }}"></label><label class="span2">Description<textarea name="description" rows="5" required>{{ course.description }}</textarea></label><label>Image filename<input name="image" value="{{ course.image or '' }}"></label><label>Level<select name="level"><option {% if course.level=='Beginner' %}selected{% endif %}>Beginner</option><option {% if course.level=='Intermediate' %}selected{% endif %}>Intermediate</option><option {% if course.level=='Advanced' %}selected{% endif %}>Advanced</option></select></label><label>Duration<input name="duration" value="{{ course.duration }}"></label><div class="form-submit span2"><button class="btn primary">Save Changes →</button></div></form></section>
+{% endblock %}

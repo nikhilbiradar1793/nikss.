@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Course | NIKSS Admin{% endblock %}
+
+{% block content %}
+
+<section class="admin-form-head">
+    <a class="back" href="{{ url_for('admin_dashboard') }}">
+        ← Admin Dashboard
+    </a>
+
+    <div class="eyebrow">COURSE STUDIO</div>
+
+    <h1>
+        Edit <em>{{ course.title }}</em>
+    </h1>
+</section>
+
+<section class="form-card wide">
+
+    <form
+            method="POST"
+            action="{{ url_for('admin_edit_course', course_id=course.id) }}"
+            class="form grid-form"
+            enctype="multipart/form-data"
+    >
+
+        <label>
+            Course title
+            <input
+                    name="title"
+                    value="{{ course.title }}"
+                    required
+            >
+        </label>
+
+        <label>
+            Price
+            <input
+                    name="price"
+                    type="number"
+                    min="0"
+                    step="1"
+                    value="{{ course.price or 0 }}"
+            >
+        </label>
+
+        <label class="span2">
+            Description
+            <textarea
+                    name="description"
+                    rows="5"
+                    required
+            >{{ course.description }}</textarea>
+        </label>
+
+        <label class="span2">
+            Replace Course Poster / Image
+            <input
+                    type="file"
+                    name="poster_image"
+                    accept=".jpg,.jpeg,.png,.webp"
+            >
+            <small>
+                Choose a new image only if you want to replace the current poster.
+                Allowed: JPG, JPEG, PNG and WEBP.
+            </small>
+        </label>
+
+        {% if course.image %}
+        <div class="span2">
+            <p>
+                <strong>Current Course Poster</strong>
+            </p>
+
+            <img
+                    src="{{ url_for('static', filename='uploads/' + course.image) }}"
+                    alt="{{ course.title }}"
+                    style="
+                    width: 320px;
+                    max-width: 100%;
+                    aspect-ratio: 16 / 9;
+                    object-fit: cover;
+                    border-radius: 16px;
+                    display: block;
+                    margin-top: 10px;
+                    border: 1px solid rgba(255,255,255,.12);
+                "
+            >
+        </div>
+        {% endif %}
+
+        <label>
+            Level
+            <select name="level">
+                <option {% if course.level == 'Beginner' %}selected{% endif %}>
+                Beginner
+                </option>
+                <option {% if course.level == 'Intermediate' %}selected{% endif %}>
+                Intermediate
+                </option>
+                <option {% if course.level == 'Advanced' %}selected{% endif %}>
+                Advanced
+                </option>
+            </select>
+        </label>
+
+        <label>
+            Duration
+            <input
+                    name="duration"
+                    value="{{ course.duration }}"
+            >
+        </label>
+
+        <div class="form-submit span2">
+            <button class="btn primary" type="submit">
+                Save Changes →
+            </button>
+        </div>
+
+    </form>
+
+</section>
+
+{% endblock %}

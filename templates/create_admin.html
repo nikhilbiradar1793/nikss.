@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}Create Admin | NIKSS{% endblock %}
+{% block content %}
+<section class="admin-form-head"><a class="back" href="{{ url_for('admin_dashboard') }}">← Admin Dashboard</a><div class="eyebrow">ACCESS CONTROL</div><h1>Create an <em>administrator.</em></h1></section>
+<section class="form-card narrow"><form method="POST" action="{{ url_for('create_admin') }}" class="form"><label>Name<input name="name" required></label><label>Email<input type="email" name="email" required></label><label>Password<input type="password" name="password" required></label><label>Confirm password<input type="password" name="confirm_password" required></label><button class="btn primary">Create Admin →</button></form></section>
+{% endblock %}

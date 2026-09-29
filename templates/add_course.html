@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}Add Course | NIKSS Admin{% endblock %}
+{% block content %}
+<section class="admin-form-head"><a class="back" href="{{ url_for('admin_dashboard') }}">← Admin Dashboard</a><div class="eyebrow">COURSE STUDIO</div><h1>Create a new <em>course.</em></h1><p>Publish a clean, structured learning path for students.</p></section>
+<section class="form-card wide"><form method="POST" action="{{ url_for('admin_add_course') }}" class="form grid-form"><label>Course title<input name="title" required placeholder="Python Programming"></label><label>Price (INR)<input name="price" type="number" min="0" step="1" placeholder="4999"></label><label class="span2">Description<textarea name="description" rows="5" required placeholder="Describe what students will learn..."></textarea></label><label>Image filename<input name="image" placeholder="python.jpg"></label><label>Level<select name="level"><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select></label><label>Duration<input name="duration" value="8 Weeks"></label><div class="form-submit span2"><button class="btn primary">Create Course →</button></div></form></section>
+{% endblock %}

@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}Chatbot Leads | NIKSS Admin{% endblock %}
+{% block content %}
+<section class="admin-form-head"><a class="back" href="{{ url_for('admin_dashboard') }}">← Admin Dashboard</a><div class="eyebrow">AI TUTOR CRM</div><h1>Chatbot <em>leads.</em></h1></section>
+<section class="admin-panel"><div class="admin-table">{% for l in leads %}<div class="table-row"><div class="row-avatar">{{ (l.name or 'L')[:1] }}</div><div class="row-main"><b>{{ l.name or 'Unknown' }}</b><small>{{ l.email or 'No email' }} · {{ l.mobile or 'No mobile' }}</small></div><span>{{ l.help_topic or 'General' }}</span><small>{{ l.goal or '' }}</small></div>{% else %}<div class="empty">No chatbot leads yet.</div>{% endfor %}</div></section>
+{% endblock %}

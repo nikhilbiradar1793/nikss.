@@ -1,0 +1,22 @@
+NIKSS CODING HUB - GOOGLE + MOBILE OTP SIGNUP
+
+Signup flow:
+1. User clicks Continue with Google.
+2. Google verifies the user's email.
+3. No account is created yet.
+4. User enters First Name, Last Name and Mobile Number.
+5. A 6-digit mobile OTP is sent.
+6. User enters the OTP.
+7. Only after successful OTP verification is the User row created/updated.
+8. Future login uses Google; users do not use an email/password login.
+
+PRODUCTION SMS:
+Set these Render environment variables for Twilio Verify:
+TWILIO_ACCOUNT_SID
+TWILIO_AUTH_TOKEN
+TWILIO_VERIFY_SERVICE_SID
+
+Without Twilio variables, local development prints the OTP in the Flask server console only. This fallback is NOT real SMS and must not be used as the production verification method.
+
+GOOGLE CALLBACK:
+https://YOUR-DOMAIN/login/google/callback

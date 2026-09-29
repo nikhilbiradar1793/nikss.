@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% block title %}NIKSS AI Tutor{% endblock %}
+{% block content %}
+<section class="ai-page">
+  <div class="ai-head">
+    <div>
+      <div class="eyebrow"><span class="live"></span> DIRECT ANSWERS • NO API KEY REQUIRED</div>
+      <h1>NIKSS <em>AI Tutor</em></h1>
+      <p>Ask a coding question and get the answer directly, displayed line by line for easier learning.</p>
+    </div>
+    <span class="online">● Online</span>
+  </div>
+
+  <div class="chat-shell">
+    <div class="chat-toolbar">
+      <span class="bot-avatar">✦</span>
+      <div><b>NIKSS AI Educator</b><small>Direct answer • Line-by-line learning</small></div>
+      <button type="button" onclick="clearChat()">Clear</button>
+    </div>
+
+    <div class="messages" id="messages">
+      <div class="msg bot">
+        <b>Welcome to NIKSS Coding Hub 👋</b><br><br>
+        Ask your coding question and I will give the answer directly, one line at a time.
+        <div class="quick">
+          <button type="button" onclick="ask('Explain Python')">Python</button>
+          <button type="button" onclick="ask('Explain Java')">Java</button>
+          <button type="button" onclick="ask('What is DSA?')">DSA</button>
+          <button type="button" onclick="ask('Give me a project idea')">Projects</button>
+        </div>
+      </div>
+    </div>
+
+    <form class="chat-input" onsubmit="sendChat(event)">
+      <input id="question" placeholder="Ask NIKSS AI Tutor..." autocomplete="off">
+      <button type="submit" aria-label="Send">→</button>
+    </form>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let answerBusy = false;
+
+function scrollMessages() {
+  const box = document.getElementById('messages');
+  box.scrollTop = box.scrollHeight;
+}
+
+function addUserMessage(text) {
+  const m = document.getElementById('messages');
+  const d = document.createElement('div');
+  d.className = 'msg user';
+  d.textContent = text;
+  m.appendChild(d);
+  scrollMessages();
+}
+
+function addBotAnswer(answer) {
+  const m = document.getElementById('messages');
+  const wrapper = document.createElement('div');
+  wrapper.className = 'msg bot answer-animation';
+  m.appendChild(wrapper);
+
+  // Answers come from the trusted local NIKSS knowledge base.
+  // Split only on HTML line breaks so formatting such as <b> remains intact.
+  const lines = String(answer || '').split(/<br\s*\/?>/i);
+  const cleanLines = lines.filter(line => line.replace(/<[^>]+>/g, '').trim() !== '');
+
+  let index = 0;
+
+  function showNextLine() {
+    if (index >= cleanLines.length) {
+      answerBusy = false;
+      scrollMessages();
+      return;
+    }
+
+    const line = document.createElement('div');
+    line.className = 'answer-line';
+    line.innerHTML = cleanLines[index++];
+    wrapper.appendChild(line);
+
+    requestAnimationFrame(() => line.classList.add('show'));
+    scrollMessages();
+
+    // Line-by-line animation: no repeated words and no word-by-word typing.
+    window.setTimeout(showNextLine, 280);
+  }
+
+  showNextLine();
+}
+
+function ask(text) {
+  if (answerBusy) return;
+  document.getElementById('question').value = text;
+  sendChat(new Event('submit'));
+}
+
+function clearChat() {
+  document.getElementById('messages').innerHTML = `
+    <div class="msg bot">
+      <b>Welcome to NIKSS Coding Hub 👋</b><br><br>
+      Ask your coding question and I will give the answer directly, one line at a time.
+    </div>`;
+}
+
+async function sendChat(e) {
+  e.preventDefault();
+  if (answerBusy) return;
+
+  const input = document.getElementById('question');
+  const q = input.value.trim();
+  if (!q) return;
+
+  answerBusy = true;
+  addUserMessage(q);
+  input.value = '';
+
+  try {
+    const response = await fetch('{{ url_for("chatbot") }}', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({question: q})
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      addBotAnswer(data.answer || data.message || 'I could not answer that yet.');
+      return;
+    }
+
+    addBotAnswer(data.answer);
+  } catch (error) {
+    console.error('AI Tutor error:', error);
+    addBotAnswer('Unable to reach the NIKSS AI Tutor right now.<br>Please try again.');
+  }
+}
+</script>
+{% endblock %}

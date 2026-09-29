@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}NIKSS Coding Hub | Verify Mobile{% endblock %}
+{% block content %}
+<section class="auth-page">
+  <div class="auth-story">
+    <div class="eyebrow"><span class="live"></span> MOBILE VERIFICATION</div>
+    <h1>Verify your <em>mobile number.</em></h1>
+    <p>Enter the 6-digit OTP sent to your mobile number. Your NIKSS account will be created only after successful verification.</p>
+    <div class="check-grid">
+      <span>✓ Google verified</span>
+      <span>✓ OTP protected</span>
+      <span>✓ Account creation</span>
+      <span>✓ Ready to learn</span>
+    </div>
+  </div>
+
+  <div class="auth-card">
+    <div class="eyebrow">FINAL STEP</div>
+    <h2>Enter OTP</h2>
+    <p>OTP sent to <strong>{{ mobile }}</strong></p>
+
+    <form method="POST" autocomplete="one-time-code">
+      <label>6-Digit OTP</label>
+      <input type="text" name="otp" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="••••••" required autofocus>
+      <button class="google" type="submit" style="width:100%;border:0;cursor:pointer;justify-content:center;">Verify OTP & Create Account</button>
+    </form>
+
+    <p class="auth-bottom"><a href="{{ url_for('resend_signup_otp') }}">Resend OTP</a></p>
+  </div>
+</section>
+{% endblock %}

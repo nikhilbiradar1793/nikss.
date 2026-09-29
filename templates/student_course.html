@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}{{ course.title }} | Learning{% endblock %}
+{% block content %}
+<section class="learn-head"><div><a class="back" href="{{ url_for('student_dashboard') }}">← Dashboard</a><div class="eyebrow">COURSE PLAYER</div><h1>{{ course.title }}</h1><p>{{ course.description }}</p></div><div class="course-progress"><small>COURSE PROGRESS</small><strong id="progressValue">{{ enrollment.progress or 0 }}%</strong><div class="progress"><span id="progressBar" style="width:{{ enrollment.progress or 0 }}%"></span></div></div></section>
+<section class="learn-layout">
+ <aside class="lesson-sidebar"><div class="sidebar-title"><span>LESSONS</span><b>{{ videos|length }}</b></div>
+ {% for video in videos %}<button class="lesson {% if loop.first %}active{% endif %}" onclick="selectLesson({{ video.id }})"><span>{{ "%02d"|format(loop.index) }}</span><div><b>{{ video.title }}</b><small>{{ video.duration or 'Video lesson' }}</small></div>{% if video.id in watched_video_ids %}<i>✓</i>{% endif %}</button>{% else %}<div class="empty">No lessons published yet.</div>{% endfor %}
+ </aside>
+ <div class="player-area">
+  <div class="video-shell">
+   {% for video in videos %}<div class="lesson-panel" id="video-{{ video.id }}" style="{% if not loop.first %}display:none{% endif %}">
+    {% set src = get_video_source(video) %}
+    {% if src %}<video controls playsinline preload="metadata" data-video-id="{{ video.id }}"><source src="{{ src }}"></video>{% else %}<div class="no-video">Video source unavailable.</div>{% endif %}
+    <div class="video-info"><div><div class="eyebrow">LESSON {{ "%02d"|format(loop.index) }}</div><h2>{{ video.title }}</h2><p>{{ video.description }}</p></div><button class="btn primary" onclick="completeLesson({{ video.id }})">Mark Complete ✓</button></div>
+   </div>{% else %}<div class="no-video"><h2>Lessons coming soon</h2><p>Your course content will appear here.</p></div>{% endfor %}
+  </div>
+ </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+function selectLesson(id){document.querySelectorAll('.lesson-panel').forEach(x=>x.style.display='none');document.getElementById('video-'+id).style.display='block';document.querySelectorAll('.lesson').forEach(x=>x.classList.remove('active'));event.currentTarget.classList.add('active');}
+async function completeLesson(id){
+ const r=await fetch(`/course/{{ course.id }}/video/${id}/complete`,{method:'POST'});
+ const d=await r.json(); if(d.success){document.getElementById('progressValue').textContent=d.progress+'%';document.getElementById('progressBar').style.width=d.progress+'%';location.reload();} else alert(d.message||'Unable to save progress.');
+}
+</script>
+{% endblock %}

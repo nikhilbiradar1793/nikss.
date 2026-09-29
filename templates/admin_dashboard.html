@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Admin Control Center | NIKSS Coding Hub{% endblock %}
+{% block content %}
+<section class="admin-head"><div><div class="eyebrow">NIKSS CONTROL CENTER</div><h1>Admin <em>Dashboard.</em></h1><p>Monitor users, courses, enrollments, payments, videos and AI activity.</p></div><div class="admin-head-actions"><a class="btn" href="{{ url_for('admin_branding') }}">⚙ Edit Header</a><a class="btn primary" href="{{ url_for('admin_add_course') }}">+ Add Course</a></div></section>
+<div class="admin-stats">
+ {% for label,value,icon in [('Students',student_count,'◉'),('Courses',total_courses,'▦'),('Enrollments',total_enrollments,'◆'),('Revenue','₹%.0f'|format(total_revenue or 0),'₹'),('Videos',total_videos,'▶'),('Messages',total_messages,'✉')] %}
+ <div class="admin-stat"><span>{{ icon }}</span><small>{{ label }}</small><strong>{{ value }}</strong></div>{% endfor %}
+</div>
+<div class="admin-layout">
+ <section class="admin-panel"><div class="panel-head"><div><div class="eyebrow">COURSE MANAGEMENT</div><h2>Your courses</h2></div><a href="{{ url_for('admin_add_course') }}">Add →</a></div>
+  <div class="admin-table">
+   {% for c in courses %}<div class="table-row"><div class="row-avatar">{{ c.title[:1] }}</div><div class="row-main"><b>{{ c.title }}</b><small>₹{{ "%.0f"|format(c.price or 0) }} · {{ c.level }} · {{ c.duration }}</small></div><span class="status {{ 'on' if c.is_active else 'off' }}">{{ 'Active' if c.is_active else 'Hidden' }}</span><div class="row-actions"><a href="{{ url_for('admin_edit_course', course_id=c.id) }}">Edit</a><a href="{{ url_for('admin_upload_video', course_id=c.id) }}">Videos</a><form method="POST" action="{{ url_for('admin_toggle_course', course_id=c.id) }}"><button>{{ 'Hide' if c.is_active else 'Show' }}</button></form></div></div>
+   {% else %}<div class="empty">No courses yet.</div>{% endfor %}
+  </div></section>
+ <aside class="admin-side"><a class="admin-link" href="{{ url_for('admin_branding') }}">✦ <span>Header & Branding<small>Logo and website name</small></span>→</a><a class="admin-link" href="{{ url_for('admin_messages') }}">✉ <span>Contact Messages<small>{{ unread_messages }} unread</small></span>→</a><a class="admin-link" href="{{ url_for('admin_chatbot_leads') }}">◉ <span>Chatbot Leads<small>{{ total_chatbot_leads }} captured</small></span>→</a><a class="admin-link" href="{{ url_for('admin_chat_history') }}">⌁ <span>Chat History<small>{{ total_chat_messages }} messages</small></span>→</a><a class="admin-link" href="{{ url_for('create_admin') }}">＋ <span>Create Admin<small>Manage access</small></span>→</a></aside>
+</div>
+<section class="admin-panel"><div class="panel-head"><div><div class="eyebrow">RECENT ENROLLMENTS</div><h2>Student progress</h2></div></div>
+ <div class="admin-table">{% for e in enrollments[:12] %}<div class="table-row"><div class="row-avatar">{{ e.user.name[:1] }}</div><div class="row-main"><b>{{ e.user.name }}</b><small>{{ e.course.title }}</small></div><div class="progress mini"><span style="width:{{ e.progress or 0 }}%"></span></div><strong>{{ e.progress or 0 }}%</strong><form method="POST" action="{{ url_for('admin_update_progress', enrollment_id=e.id) }}" class="inline-progress"><input type="number" min="0" max="100" name="progress" value="{{ e.progress or 0 }}"><button>Save</button></form></div>{% else %}<div class="empty">No enrollments yet.</div>{% endfor %}</div></section>
+{% endblock %}

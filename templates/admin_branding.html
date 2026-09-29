@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Header & Branding | NIKSS Admin{% endblock %}
+{% block content %}
+<section class="admin-form-head">
+    <a class="back" href="{{ url_for('admin_dashboard') }}">← Admin Dashboard</a>
+    <div class="eyebrow">BRAND STUDIO</div>
+    <h1>Header <em>branding.</em></h1>
+    <p>Change the logo and website name shown in the header across desktop and mobile.</p>
+</section>
+
+<section class="form-card wide">
+    <form method="POST" action="{{ url_for('admin_branding') }}" class="form grid-form" enctype="multipart/form-data">
+        <label class="span2">
+            Website Name
+            <input name="site_name" value="{{ site_name }}" maxlength="100" required placeholder="NIKSS Coding Hub">
+            <small>The logo and website name will stay on one line in the header.</small>
+        </label>
+
+        <label class="span2">
+            Header Logo
+            <input name="site_logo" type="file" accept=".jpg,.jpeg,.png,.webp">
+            <small>Upload JPG, JPEG, PNG or WEBP. Leave empty to keep the current logo.</small>
+        </label>
+
+        {% if site_logo %}
+        <div class="span2">
+            <small style="display:block;margin-bottom:8px;">Current Logo</small>
+            <div style="display:flex;align-items:center;gap:12px;padding:14px;border:1px solid rgba(255,255,255,.09);border-radius:14px;background:rgba(255,255,255,.025);max-width:460px;">
+                <img src="{{ url_for('static', filename='uploads/' ~ site_logo) }}" alt="{{ site_name }} logo" style="width:64px;height:64px;object-fit:cover;border-radius:14px;">
+                <strong>{{ site_name }}</strong>
+            </div>
+        </div>
+        {% else %}
+        <div class="span2">
+            <small style="display:block;margin-bottom:8px;">Current Logo</small>
+            <div style="display:flex;align-items:center;gap:12px;padding:14px;border:1px solid rgba(255,255,255,.09);border-radius:14px;background:rgba(255,255,255,.025);max-width:460px;">
+                <span class="logo">&lt;/&gt;</span>
+                <strong>{{ site_name }}</strong>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="form-submit span2">
+            <button class="btn primary" type="submit">Save Header Settings →</button>
+        </div>
+    </form>
+</section>
+{% endblock %}

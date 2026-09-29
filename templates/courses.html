@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}NIKSS Coding Hub | Courses{% endblock %}
+{% block content %}
+<section class="page-hero"><div class="eyebrow">LEARNING LIBRARY</div><h1>Build skills that <em>compound.</em></h1><p>Explore practical learning paths designed around programming, development, cybersecurity and data.</p></section>
+<section class="section no-top"><div class="grid-3">
+{% for course in courses %}
+<article class="course-card">
+ <div class="course-cover">{% if course.image %}<img src="{{ url_for('static', filename='uploads/' ~ course.image) }}">{% endif %}<span>{{ course.level }}</span><b>{{ course.title[:1] }}</b></div>
+ <div class="course-body"><small>{{ course.duration }} · PRACTICAL</small><h3>{{ course.title }}</h3><p>{{ course.description }}</p><div class="course-foot"><strong>₹{{ "%.0f"|format(course.price or 0) }}</strong><a href="{{ url_for('course_details', course_id=course.id) }}">View course →</a></div></div>
+</article>
+{% else %}<div class="empty full">No active courses available.</div>{% endfor %}
+</div></section>
+{% endblock %}

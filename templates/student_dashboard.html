@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Student Dashboard | NIKSS Coding Hub{% endblock %}
+{% block content %}
+<section class="dash-head"><div><div class="eyebrow">STUDENT DASHBOARD</div><h1>Welcome, <em>{{ user.name }}</em> 👋</h1><p>Keep learning. Keep building. Keep shipping.</p></div><a class="btn primary" href="{{ url_for('courses') }}">Explore Courses →</a></section>
+<div class="stat-grid"><div><small>ENROLLED COURSES</small><strong>{{ enrollments|length }}</strong><span>Your learning paths</span></div><div><small>ACCOUNT</small><strong>ACTIVE</strong><span>{{ user.email }}</span></div><div><small>AI TUTOR</small><strong>READY</strong><span>Ask whenever you're stuck</span></div></div>
+<section class="section no-top"><div class="section-head"><div><div class="eyebrow">YOUR LEARNING</div><h2>Continue <em>learning.</em></h2></div><a href="{{ url_for('chatbot') }}">Open AI Tutor →</a></div>
+<div class="learning-list">
+{% for e in enrollments %}<article class="learning-card"><div class="lesson-icon">{{ e.course.title[:1] }}</div><div class="learning-main"><small>{{ e.course.level }} · {{ e.course.duration }}</small><h3>{{ e.course.title }}</h3><div class="progress"><span style="width:{{ e.progress or 0 }}%"></span></div></div><b>{{ e.progress or 0 }}%</b><a class="btn secondary small" href="{{ url_for('student_learn_course', course_id=e.course_id) }}">Continue</a></article>
+{% else %}<div class="empty"><h3>Your learning space is ready.</h3><p>Enroll in a course to see lessons and progress here.</p><a class="btn primary" href="{{ url_for('courses') }}">Explore Courses</a></div>{% endfor %}
+</div></section>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}NIKSS Coding Hub | Google Login{% endblock %}
+{% block content %}
+<section class="auth-page">
+  <div class="auth-story">
+    <div class="eyebrow"><span class="live"></span> SECURE GOOGLE AUTHENTICATION</div>
+    <h1>Your next <em>breakthrough</em> starts here.</h1>
+    <p>Sign in securely with your Google account. NIKSS Coding Hub does not use local email/password login for students.</p>
+    <div class="story-points">
+      <span>01 · Google Verify</span>
+      <span>02 · Secure Login</span>
+      <span>03 · Start Learning</span>
+    </div>
+  </div>
+
+  <div class="auth-card">
+    <div class="eyebrow">NIKSS CODING HUB</div>
+    <h2>Welcome back</h2>
+    <p>Google authentication is required to access your NIKSS account.</p>
+
+    <a class="google" href="{{ url_for('google_login') }}">
+      <b>G</b> Continue with Google
+    </a>
+
+    <div class="google-only-note">
+      <strong>Google authentication required</strong>
+      <span>Your account is created automatically after Google successfully verifies your email.</span>
+    </div>
+
+    <p class="auth-bottom">New to NIKSS? <a href="{{ url_for('google_login') }}">Create your account with Google</a></p>
+  </div>
+</section>
+{% endblock %}

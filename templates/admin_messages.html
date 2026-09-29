@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}Messages | NIKSS Admin{% endblock %}
+{% block content %}
+<section class="admin-form-head"><a class="back" href="{{ url_for('admin_dashboard') }}">← Admin Dashboard</a><div class="eyebrow">INBOX</div><h1>Contact <em>messages.</em></h1></section>
+<section class="admin-panel"><div class="admin-table">{% for m in messages %}<article class="message-card"><div class="message-head"><div><b>{{ m.name }}</b><small>{{ m.email }}</small></div><span>{{ m.created_at }}</span></div><h3>{{ m.subject }}</h3><p>{{ m.message }}</p><div class="row-actions">{% if not m.is_read %}<form method="POST" action="{{ url_for('admin_mark_message_read', message_id=m.id) }}"><button>Mark Read</button></form>{% endif %}<form method="POST" action="{{ url_for('admin_delete_message', message_id=m.id) }}" onsubmit="return confirm('Delete message?')"><button>Delete</button></form></div></article>{% else %}<div class="empty">No messages.</div>{% endfor %}</div></section>
+{% endblock %}

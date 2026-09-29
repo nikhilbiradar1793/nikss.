@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}NIKSS Coding Hub | Google Account{% endblock %}
+{% block content %}
+<section class="auth-page">
+  <div class="auth-story">
+    <div class="eyebrow"><span class="live"></span> GOOGLE AUTHENTICATION</div>
+    <h1>Create your <em>NIKSS account.</em></h1>
+    <p>Your NIKSS account is created automatically after successful Google authentication.</p>
+    <div class="check-grid">
+      <span>✓ Google verified</span>
+      <span>✓ Automatic account creation</span>
+      <span>✓ No mobile OTP</span>
+      <span>✓ Start learning</span>
+    </div>
+  </div>
+
+  <div class="auth-card">
+    <div class="eyebrow">GOOGLE ACCOUNT</div>
+    <h2>Continue with Google</h2>
+    <p>There is no separate registration form, mobile number, or OTP. Continue with Google and your account will be created automatically.</p>
+    <a class="google" href="{{ url_for('google_login') }}">
+      <b>G</b> Continue with Google
+    </a>
+  </div>
+</section>
+{% endblock %}

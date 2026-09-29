@@ -1,0 +1,45 @@
+NIKSS CODING HUB - GOOGLE-ONLY AUTHENTICATION + AI TUTOR UPDATE
+================================================================
+
+CHANGES
+1. Student signup is Google-only.
+   - Manual name/email/password signup is disabled.
+   - A student account is created only after Google OAuth succeeds.
+2. Student login is Google-only.
+   - Email/password login is disabled.
+   - Existing local-password student accounts cannot log in by password.
+   - They must authenticate through Google using the same email.
+3. Google email verification is required.
+   - The OAuth callback requires Google to return email_verified=True.
+4. AI Tutor gives the local knowledge-base answer directly.
+5. AI Tutor displays answers line-by-line with a smooth animation.
+   - It does not type the same word repeatedly.
+   - No external AI API key is required for the current local knowledge base.
+
+GOOGLE OAUTH ENVIRONMENT VARIABLES
+-----------------------------------
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+
+For production, configure this callback URL in Google Cloud:
+https://YOUR-DOMAIN/login/google/callback
+
+For local development:
+http://127.0.0.1:5000/login/google/callback
+
+IMPORTANT
+---------
+Do not commit real Google client secrets or other credentials to GitHub.
+Set them in your hosting provider's Environment Variables.
+
+RAZORPAY
+--------
+The existing Razorpay code/configuration was left intact in this update.
+
+
+ADMIN GOOGLE LOGIN
+The following Google accounts are pre-configured as admin accounts and bypass student mobile OTP registration:
+- nikhilbiradar53@gmail.com
+- nikhilbiradar1793@gmail.com
+- nikhilbiradar9405@gmail.com
+After signing in with one of these Google accounts, the user is sent directly to /admin.

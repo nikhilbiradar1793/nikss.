@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Contact | NIKSS Coding Hub{% endblock %}
+{% block content %}
+<section class="page-hero"><div class="eyebrow">CONTACT</div><h1>Let's build something <em>useful.</em></h1><p>Have a course question, technical issue or feedback? Send a message to NIKSS Coding Hub.</p></section>
+<section class="contact-grid"><div class="contact-info"><div><b>01</b><h3>Course Support</h3><p>Questions about enrollment, course access or learning.</p></div><div><b>02</b><h3>Technical Support</h3><p>Tell us what went wrong and include useful details.</p></div><div><b>03</b><h3>Feedback</h3><p>Your feedback helps improve the platform.</p></div></div>
+<div class="form-card"><form method="POST" action="{{ url_for('contact') }}" class="form"><label>Name<input name="name" required placeholder="Your name"></label><label>Email<input type="email" name="email" required placeholder="you@example.com"></label><label>Subject<input name="subject" required placeholder="How can we help?"></label><label>Message<textarea name="message" rows="6" required placeholder="Write your message..."></textarea></label><button class="btn primary">Send Message →</button></form></div></section>
+{% endblock %}

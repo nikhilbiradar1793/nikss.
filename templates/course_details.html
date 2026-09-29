@@ -1,0 +1,512 @@
+{% extends "base.html" %}
+
+{% block title %}{{ course.title }} | NIKSS Coding Hub{% endblock %}
+
+{% block content %}
+
+<section class="course-detail">
+
+ <div class="detail-cover">
+  {% if course.image %}
+  <img src="{{ url_for('static', filename='uploads/' ~ course.image) }}" alt="{{ course.title }}">
+  {% endif %}
+
+  <div>
+   <span>{{ course.level }}</span>
+   <b>{{ course.title[:1] }}</b>
+  </div>
+ </div>
+
+ <div class="detail-copy">
+
+  <div class="eyebrow">
+   COURSE / {{ course.level|upper }}
+  </div>
+
+  <h1>{{ course.title }}</h1>
+
+  <p class="lead">
+   {{ course.description }}
+  </p>
+
+  <div class="detail-stats">
+
+   <div>
+    <b>◷</b>
+    <span>
+                    Duration
+                    <small>{{ course.duration }}</small>
+                </span>
+   </div>
+
+   <div>
+    <b>◆</b>
+    <span>
+                    Level
+                    <small>{{ course.level }}</small>
+                </span>
+   </div>
+
+   <div>
+    <b>✓</b>
+    <span>
+                    Format
+                    <small>Video + Projects</small>
+                </span>
+   </div>
+
+  </div>
+
+  <div class="price-box">
+
+   <div>
+    <small>COURSE ACCESS</small>
+    <strong>
+     ₹{{ "%.0f"|format(course.price or 0) }}
+    </strong>
+   </div>
+
+   {% if enrolled %}
+
+   <a
+           class="btn primary"
+           href="{{ url_for('learn_course', course_id=course.id) }}"
+   >
+    Continue Learning →
+   </a>
+
+   {% elif session.get('user_id') and (course.price or 0) <= 0 %}
+
+   <form
+           method="POST"
+           action="{{ url_for('enroll', course_id=course.id) }}"
+   >
+    <button class="btn primary">
+     Enroll Free →
+    </button>
+   </form>
+
+   {% elif session.get('user_id') %}
+
+   <button
+           id="payButton"
+           class="btn primary"
+           type="button"
+           onclick="startPayment({{ course.id }})"
+   >
+    Unlock Course →
+   </button>
+
+   {% else %}
+
+   <a
+           class="btn primary"
+           href="{{ url_for('login', next=url_for('course_details', course_id=course.id)) }}"
+   >
+    Login to Enroll →
+   </a>
+
+   {% endif %}
+
+  </div>
+
+ </div>
+
+</section>
+
+
+<section class="section detail-lower">
+
+ <div>
+  <div class="eyebrow">
+   WHAT YOU GET
+  </div>
+
+  <h2>
+   Learn by <em>doing.</em>
+  </h2>
+ </div>
+
+ <div class="benefits">
+
+  <div>✓ Structured lessons</div>
+  <div>✓ Practical coding exercises</div>
+  <div>✓ Project-focused learning</div>
+  <div>✓ Course progress tracking</div>
+  <div>✓ AI Tutor support</div>
+  <div>✓ Lifetime learning access*</div>
+
+ </div>
+
+</section>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<!-- ============================================================
+     RAZORPAY CHECKOUT
+     ============================================================ -->
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+
+<script>
+
+ async function startPayment(courseId) {
+
+  const button = document.getElementById("payButton");
+
+  try {
+
+   // --------------------------------------------------------
+   // CHECK RAZORPAY LIBRARY
+   // --------------------------------------------------------
+
+   if (typeof Razorpay === "undefined") {
+
+    alert(
+            "Razorpay payment gateway could not be loaded. " +
+            "Please refresh the page and try again."
+    );
+
+    console.error(
+            "Razorpay Checkout JavaScript is not loaded."
+    );
+
+    return;
+   }
+
+
+   // --------------------------------------------------------
+   // DISABLE BUTTON
+   // --------------------------------------------------------
+
+   if (button) {
+
+    button.disabled = true;
+    button.innerText = "Creating Payment...";
+   }
+
+
+   // --------------------------------------------------------
+   // CREATE RAZORPAY ORDER
+   // --------------------------------------------------------
+
+   const response = await fetch(
+           `/payment/create/${courseId}`,
+           {
+            method: "POST",
+            headers: {
+             "Content-Type": "application/json"
+            }
+           }
+   );
+
+
+   // --------------------------------------------------------
+   // CHECK HTTP RESPONSE
+   // --------------------------------------------------------
+
+   if (!response.ok) {
+
+    console.error(
+            "Payment API HTTP error:",
+            response.status
+    );
+
+    let errorData = {};
+
+    try {
+     errorData = await response.json();
+    } catch (e) {
+     console.error(
+             "Could not parse error response."
+     );
+    }
+
+    throw new Error(
+            errorData.message ||
+            `Payment server returned ${response.status}`
+    );
+   }
+
+
+   // --------------------------------------------------------
+   // READ JSON
+   // --------------------------------------------------------
+
+   const data = await response.json();
+
+   console.log(
+           "Razorpay order response:",
+           data
+   );
+
+
+   // --------------------------------------------------------
+   // CHECK SUCCESS
+   // --------------------------------------------------------
+
+   if (!data.success) {
+
+    throw new Error(
+            data.message ||
+            "Unable to create Razorpay payment order."
+    );
+   }
+
+
+   // --------------------------------------------------------
+   // VALIDATE ORDER
+   // --------------------------------------------------------
+
+   if (!data.order_id) {
+
+    throw new Error(
+            "Razorpay order ID is missing."
+    );
+   }
+
+
+   if (!data.key) {
+
+    throw new Error(
+            "Razorpay Key ID is missing."
+    );
+   }
+
+
+   if (!data.amount) {
+
+    throw new Error(
+            "Payment amount is missing."
+    );
+   }
+
+
+   // --------------------------------------------------------
+   // RAZORPAY OPTIONS
+   // --------------------------------------------------------
+
+   const options = {
+
+    key: data.key,
+
+    amount: data.amount,
+
+    currency: data.currency || "INR",
+
+    name: "NIKSS Coding Hub",
+
+    description:
+            data.course_title ||
+            "Course Enrollment",
+
+    order_id: data.order_id,
+
+    prefill: {
+
+     name: data.user_name || "",
+
+     email: data.user_email || ""
+
+    },
+
+    notes: {
+
+     course_id: String(courseId)
+
+    },
+
+    theme: {
+
+     color: "#8B5CF6"
+
+    },
+
+    handler: function (paymentResponse) {
+
+     verifyPayment(
+             courseId,
+             paymentResponse
+     );
+
+    },
+
+    modal: {
+
+     ondismiss: function () {
+
+      console.log(
+              "Razorpay checkout closed."
+      );
+
+      resetPayButton();
+
+     }
+
+    }
+
+   };
+
+
+   // --------------------------------------------------------
+   // OPEN RAZORPAY
+   // --------------------------------------------------------
+
+   const razorpay = new Razorpay(options);
+
+
+   razorpay.on(
+           "payment.failed",
+           function (response) {
+
+            console.error(
+                    "Razorpay payment failed:",
+                    response
+            );
+
+            alert(
+                    response.error &&
+                    response.error.description
+                            ? response.error.description
+                            : "Payment failed. Please try again."
+            );
+
+            resetPayButton();
+
+           }
+   );
+
+
+   razorpay.open();
+
+
+  } catch (error) {
+
+   console.error(
+           "Payment Error:",
+           error
+   );
+
+   alert(
+           error.message ||
+           "Payment could not be started. Please try again."
+   );
+
+   resetPayButton();
+
+  }
+
+ }
+
+
+ function resetPayButton() {
+
+  const button =
+          document.getElementById("payButton");
+
+  if (button) {
+
+   button.disabled = false;
+
+   button.innerText =
+           "Unlock Course →";
+
+  }
+
+ }
+
+
+ async function verifyPayment(
+         courseId,
+         paymentResponse
+ ) {
+
+  try {
+
+   console.log(
+           "Verifying Razorpay payment..."
+   );
+
+
+   const response = await fetch(
+           `/payment/verify/${courseId}`,
+           {
+            method: "POST",
+
+            headers: {
+             "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify(
+                    paymentResponse
+            )
+           }
+   );
+
+
+   if (!response.ok) {
+
+    throw new Error(
+            `Payment verification failed (${response.status})`
+    );
+
+   }
+
+
+   const data =
+           await response.json();
+
+
+   console.log(
+           "Payment verification response:",
+           data
+   );
+
+
+   alert(
+           data.message ||
+           "Payment completed successfully."
+   );
+
+
+   if (
+           data.success &&
+           data.redirect_url
+   ) {
+
+    window.location.href =
+            data.redirect_url;
+
+    return;
+
+   }
+
+
+   resetPayButton();
+
+
+  } catch (error) {
+
+   console.error(
+           "Payment verification error:",
+           error
+   );
+
+   alert(
+           "Payment was completed, but verification failed. " +
+           "Please contact NIKSS Coding Hub."
+   );
+
+   resetPayButton();
+
+  }
+
+ }
+
+</script>
+
+{% endblock %}
