@@ -10,10 +10,45 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/nikss-premium.css') }}">
   <style>
-    .brand{min-width:0;}
+    .brand{min-width:0;gap:10px;}
     .brand-logo-image{width:40px;height:40px;border-radius:12px;display:block;object-fit:cover;background:#11192A;border:1px solid rgba(255,255,255,.10);box-shadow:0 12px 30px rgba(139,92,246,.18);flex:0 0 auto;}
-    .brand-name{display:block;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:700 18px/1.1 "Space Grotesk",sans-serif;letter-spacing:.02em;color:#F5F7FF;}
-    @media(max-width:620px){.nav{padding:0 15px;}.brand{gap:8px;}.brand-logo-image,.logo{width:34px;height:34px;border-radius:10px;}.brand-name{max-width:180px;font-size:15px;}.nav-toggle{flex:0 0 auto;}}
+    .brand-name{display:block;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:700 18px/1.1 "Space Grotesk",sans-serif;letter-spacing:.02em;color:#F5F7FF;}
+
+    @media (max-width: 620px){
+      .nav{padding:0 15px;}
+      .brand{gap:8px;}
+      .brand-logo-image,.logo{width:34px;height:34px;border-radius:10px;}
+      .brand-name{max-width:180px;font-size:15px;}
+
+      /* Full-screen mobile menu */
+      .nav-links{
+        position:fixed !important;
+        inset:0 !important;
+        width:100vw !important;
+        height:100dvh !important;
+        min-height:100vh;
+        z-index:9998 !important;
+        display:none !important;
+        flex-direction:column !important;
+        align-items:center !important;
+        justify-content:center !important;
+        gap:18px !important;
+        padding:90px 28px 40px !important;
+        margin:0 !important;
+        overflow-y:auto !important;
+        background:rgba(7,10,18,.98) !important;
+        backdrop-filter:blur(18px);
+        -webkit-backdrop-filter:blur(18px);
+      }
+      .nav-links.open{display:flex !important;}
+      .nav-links a{font-size:20px !important;line-height:1.2;}
+      .nav-toggle{
+        position:relative;
+        z-index:10000;
+        flex:0 0 auto;
+      }
+      body.mobile-menu-open{overflow:hidden;}
+    }
   </style>
   {% block head %}{% endblock %}
 </head>
@@ -22,14 +57,14 @@
 <header class="nav">
   <a class="brand" href="{{ url_for('home') }}" aria-label="{{ site_name }}">
     {% if site_logo %}
-    <img class="brand-logo-image" src="{{ url_for('static', filename='uploads/' ~ site_logo) }}" alt="{{ site_name }} logo">
+    <img class="brand-logo-image" src="{{ url_for('static', filename='uploads/' ~ site_logo, v=site_logo_version) }}" alt="{{ site_name }} logo">
     {% else %}
     <span class="logo">&lt;/&gt;</span>
     {% endif %}
     <span class="brand-name">{{ site_name }}</span>
   </a>
-  <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">☰</button>
-  <nav class="nav-links">
+  <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" onclick="toggleMobileMenu(this)">☰</button>
+  <nav class="nav-links" id="mobileNav">
     <a href="{{ url_for('home') }}">Home</a>
     <a href="{{ url_for('courses') }}">Courses</a>
     <a href="{{ url_for('about') }}">About</a>
@@ -67,7 +102,7 @@
     <div>
       <a class="brand" href="{{ url_for('home') }}" aria-label="{{ site_name }}">
         {% if site_logo %}
-        <img class="brand-logo-image" src="{{ url_for('static', filename='uploads/' ~ site_logo) }}" alt="{{ site_name }} logo">
+        <img class="brand-logo-image" src="{{ url_for('static', filename='uploads/' ~ site_logo, v=site_logo_version) }}" alt="{{ site_name }} logo">
         {% else %}
         <span class="logo">&lt;/&gt;</span>
         {% endif %}
@@ -80,8 +115,35 @@
       <a href="{{ url_for('contact') }}">Contact</a><a href="{{ url_for('chatbot') }}">AI Tutor</a>
     </div>
   </div>
-  <div class="footer-bottom"><span>© {{ current_year }} {{ site_name }}</span><span>Python · Flask · SQL · AI Learning</span></div>
+  <div class="footer-bottom"><span>© 2026 NIKSS Coding Hub</span><span>Python · Flask · SQL · AI Learning</span></div>
 </footer>
+<script>
+  function toggleMobileMenu(button){
+    const nav = document.getElementById('mobileNav');
+    if(!nav) return;
+    const open = !nav.classList.contains('open');
+    nav.classList.toggle('open', open);
+    document.body.classList.toggle('mobile-menu-open', open);
+    button.setAttribute('aria-expanded', open ? 'true' : 'false');
+    button.textContent = open ? '✕' : '☰';
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    const nav = document.getElementById('mobileNav');
+    if(!nav) return;
+    nav.querySelectorAll('a').forEach(function(link){
+      link.addEventListener('click', function(){
+        nav.classList.remove('open');
+        document.body.classList.remove('mobile-menu-open');
+        const button = document.querySelector('.nav-toggle');
+        if(button){
+          button.setAttribute('aria-expanded','false');
+          button.textContent='☰';
+        }
+      });
+    });
+  });
+</script>
 <script src="{{ url_for('static', filename='js/nikss.js') }}"></script>
 {% block scripts %}{% endblock %}
 </body>

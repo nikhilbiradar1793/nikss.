@@ -19,14 +19,14 @@
         <label class="span2">
             Header Logo
             <input name="site_logo" type="file" accept=".jpg,.jpeg,.png,.webp">
-            <small>Upload JPG, JPEG, PNG or WEBP. Leave empty to keep the current logo.</small>
+            <small>Upload JPG, JPEG, PNG or WEBP. Leave empty to keep the current logo. The saved logo is used for every visitor on desktop and mobile.</small>
         </label>
 
         {% if site_logo %}
         <div class="span2">
             <small style="display:block;margin-bottom:8px;">Current Logo</small>
             <div style="display:flex;align-items:center;gap:12px;padding:14px;border:1px solid rgba(255,255,255,.09);border-radius:14px;background:rgba(255,255,255,.025);max-width:460px;">
-                <img src="{{ url_for('static', filename='uploads/' ~ site_logo) }}" alt="{{ site_name }} logo" style="width:64px;height:64px;object-fit:cover;border-radius:14px;">
+                <img src="{{ url_for('static', filename='uploads/' ~ site_logo, v=site_logo_version) }}" alt="{{ site_name }} logo" style="width:64px;height:64px;object-fit:cover;border-radius:14px;">
                 <strong>{{ site_name }}</strong>
             </div>
         </div>

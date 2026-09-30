@@ -3154,6 +3154,9 @@ def uploaded_video(filename):
 
     response.headers["Accept-Ranges"] = "bytes"
     response.headers["Content-Disposition"] = "inline"
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["X-Content-Type-Options"] = "nosniff"
 
     return response
 
@@ -5203,6 +5206,16 @@ def internal_server_error(error):
 @app.context_processor
 def inject_global_data():
 
+    logo_setting = SiteSetting.query.filter_by(
+        setting_key="site_logo"
+    ).first()
+
+    logo_version = (
+        int(logo_setting.updated_at.timestamp())
+        if logo_setting and logo_setting.updated_at
+        else 0
+    )
+
     return {
         "current_year": datetime.now().year,
 
@@ -5228,6 +5241,11 @@ def inject_global_data():
             "site_logo",
             "",
         ),
+
+        # Changes whenever the admin saves a new logo.
+        # The value is used by base.html as a cache-buster so every
+        # browser requests the newest logo immediately.
+        "site_logo_version": logo_version,
     }
 
 
